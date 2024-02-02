@@ -1,7 +1,6 @@
 package tests
 
 import (
-	"errors"
 	"goframe/controllers"
 	"goframe/utils"
 	"testing"
@@ -20,14 +19,14 @@ func TestControllers(t *testing.T) {
 					Name2: "f",
 					Name3: "c",
 				},
-				&controllers.PingRes{
-					Name:    "a",
-					Version: 1,
+				&ResponseObject[*controllers.PingRes]{
+					Code:    200,
+					Message: "success",
+					Data: &controllers.PingRes{
+						Name:    "a",
+						Version: 1,
+					},
 				},
-				200,
-				"success",
-				errors.New(""),
-				nil,
 			),
 		},
 		{
@@ -38,11 +37,11 @@ func TestControllers(t *testing.T) {
 					Name2: "f",
 					Name3: "c",
 				},
-				nil,
-				200,
-				"success",
-				errors.New(""),
-				nil,
+				&ResponseObject[*controllers.PingRes]{
+					Code:    200,
+					Message: "success",
+					Data:    nil,
+				},
 			),
 		},
 		{
@@ -53,13 +52,10 @@ func TestControllers(t *testing.T) {
 					Name2: "f",
 					Name3: "c",
 				},
-				nil,
-				400,
-				"validation error",
-				errors.New(""),
-				&utils.Response{
+				&ResponseObject[*controllers.PingRes]{
+					Code:    400,
 					Message: "validation error",
-					Data:    []string{utils.MakeValidationErr("Name", "required", "", "")},
+					ErrMsg:  []string{utils.MakeValidationErr("Name", "required", "", "")},
 				},
 			),
 		},
@@ -71,13 +67,10 @@ func TestControllers(t *testing.T) {
 					Name2: "g",
 					// Name3: "c",
 				},
-				nil,
-				400,
-				"validation error",
-				errors.New(""),
-				&utils.Response{
+				&ResponseObject[*controllers.PingRes]{
+					Code:    400,
 					Message: "validation error",
-					Data: []string{
+					ErrMsg: []string{
 						utils.MakeValidationErr("Name2", "oneof", "e f", "g"),
 						utils.MakeValidationErr("Name3", "required", "", ""),
 					},

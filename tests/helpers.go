@@ -6,38 +6,44 @@ import (
 	"testing"
 )
 
-func MakeReqRes[M utils.Model[R], R any](req M, res R, code int, msg string, err error, verr *utils.Response) func(t *testing.T) {
+type ResponseObject[R any] struct {
+	Code    int
+	Message string
+	Data    R
+	ErrMsg  []string
+}
+
+func MakeReqRes[M utils.Model[R], R any](req M, res *ResponseObject[R]) func(t *testing.T) {
 	return func(t *testing.T) {
 		vr, err := utils.ValidateData(req)
 		if err != nil {
-			if vr.Message != msg {
-				t.Errorf("res = %+v want %v", vr.Message, msg)
+			if vr.Message != res.Message {
+				t.Errorf("res = %+v want %v", vr.Message, res.Message)
 			}
-			if !reflect.DeepEqual(vr.Data, verr.Data) {
-				t.Errorf("res = %+v want %v", vr.Data, verr.Data)
+			if !reflect.DeepEqual(vr.Data, res.ErrMsg) {
+				t.Errorf("res = %+v want %v", vr.Data, res.ErrMsg)
 			}
-			if code != 400 {
-				t.Errorf("code = %v, want %v", code, 400)
+			if res.Code != 400 {
+				t.Errorf("code = %v, want %v", res.Code, 400)
 			}
 			return
 		}
 
 		c, m, r, e := req.Controller()
-		if c != code {
-			t.Errorf("code = %v, want %v", c, code)
+		if c != res.Code {
+			t.Errorf("code = %v, want %v", c, res.Code)
 		}
-		if m != msg {
-			t.Errorf("msg = %v, want %v", m, msg)
+		if m != res.Message {
+			t.Errorf("msg = %v, want %v", m, res.Message)
 		}
-		if !reflect.DeepEqual(r, res) {
-			t.Errorf("res = %v, want %v", r, res)
-		}
+		if e != nil {
+			if e.Error() != res.ErrMsg[0] {
+				t.Errorf("err = %v, want %v", e, res)
+			}
 
-		if (err == nil && e != nil) || (err != nil && e == nil) {
-			t.Errorf("err = %v, want %v", e, err)
 		}
-		if err != nil && e != nil && e.Error() != err.Error() {
-			t.Errorf("err = %v, want %v", e, err)
+		if !reflect.DeepEqual(r, res.Data) {
+			t.Errorf("res = %v, want %v", r, res.Data)
 		}
 	}
 }
