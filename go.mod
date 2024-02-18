@@ -1,6 +1,6 @@
 module goframe
 
-go 1.22rc1
+go 1.22
 
 require (
 	github.com/gabriel-vasile/mimetype v1.4.2 // indirect
