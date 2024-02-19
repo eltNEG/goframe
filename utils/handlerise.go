@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -11,7 +12,7 @@ import (
 )
 
 type Model[R any] interface {
-	Controller() (int, string, R, error)
+	Controller(ctx context.Context) (int, string, R, error)
 }
 
 func Handlerize[M Model[R], R any](m M, r R) http.HandlerFunc {
@@ -48,18 +49,13 @@ func Handlerize[M Model[R], R any](m M, r R) http.HandlerFunc {
 			return
 		}
 
-		// validate := validator.New()
-		// err := validate.Struct(reqData)
-		// if err != nil {
-		// 	response := &Response{Message: "validation error", Data: []string{}}
-		// 	for _, err := range err.(validator.ValidationErrors) {
-		// 		response.Data = append(response.Data.([]string), fmt.Sprintf("Field: [%s] Expected:[%s(%s)] Value: [%s]", err.Field(), err.Tag(), err.Param(), err.Value()))
-		// 	}
-		// 	JSONResponse(w, http.StatusBadRequest, response)
-		// 	return
-		// }
+		ctx := setcontextWR(r.Context(), r, w)
 
-		status, msg, data, err := reqData.Controller()
+		status, msg, data, err := reqData.Controller(ctx)
+		if status == 0 {
+			return
+		}
+
 		if err != nil {
 			JSONResponse(w, status, &Response{Message: msg, Data: nil})
 			return

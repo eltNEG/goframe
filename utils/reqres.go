@@ -23,7 +23,8 @@ func JSONResponse(w http.ResponseWriter, statusCode int, data *Response) {
 
 	if data != nil {
 		var err error
-		if reflect.ValueOf(data.Data).IsNil() {
+		vof := reflect.ValueOf(data.Data)
+		if !vof.IsValid() || vof.IsNil() {
 			err = json.NewEncoder(w).Encode(&ResponseMessage{Message: data.Message})
 		} else {
 			err = json.NewEncoder(w).Encode(data)

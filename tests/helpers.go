@@ -1,6 +1,7 @@
 package tests
 
 import (
+	"context"
 	"goframe/utils"
 	"reflect"
 	"testing"
@@ -29,7 +30,7 @@ func MakeReqRes[M utils.Model[R], R any](req M, res *ResponseObject[R]) func(t *
 			return
 		}
 
-		c, m, r, e := req.Controller()
+		c, m, r, e := req.Controller(context.Background())
 		if c != res.Code {
 			t.Errorf("code = %v, want %v", c, res.Code)
 		}

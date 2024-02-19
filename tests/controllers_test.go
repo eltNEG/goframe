@@ -77,6 +77,21 @@ func TestControllers(t *testing.T) {
 				},
 			),
 		},
+		{
+			name: "ping success with name2 not supplied",
+			req: MakeReqRes(
+				&controllers.Ping{
+					Name: "e",
+					// Name2: "e",
+					Name3: "c",
+				},
+				&ResponseObject[*controllers.PingRes]{
+					Code:    200,
+					Message: "success",
+					Data:    nil,
+				},
+			),
+		},
 	}
 
 	for _, tt := range tests {
