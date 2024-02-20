@@ -18,6 +18,8 @@ func main() {
 	http.Get("/subscribe", utils.Handlerize(&ctrl.Subscribe2{}, &ctrl.SubscribeRes{}))
 	http.Get("/unsubscribe", utils.Handlerize(&ctrl.Unsubscribe{}, &ctrl.SubscribeRes{}))
 
+	http.Get("/user", utils.Handlerize(&ctrl.User{}, &ctrl.UserRes{}))
+
 	slog.With("key", "value").Debug("hello world")
 	slog.Info("listening on http://localhost:8080")
 

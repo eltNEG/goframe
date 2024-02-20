@@ -1,3 +1,5 @@
 .env
 .lab/
 tmp/*
+ent/generated/*
+.data/*
