@@ -4,20 +4,26 @@ on:
         branches:
           - master
 env:
-    ENVIRONMENT: production
-    API_APP_PORT: ${{ secrets.API_APP_PORT }}
-    TUNNEL_TOKEN: ${{ secrets.TUNNEL_TOKEN }}
+    ENVIRONMENT: prod
+    API_APP_PORT: ${{ vars.API_APP_PORT }}
+    TUNNEL_TOKEN: ${{ vars.TUNNEL_TOKEN }}
 jobs:
     prod_deploy:
         runs-on: [self-hosted, prod, frameapi]
         steps:
         -   uses: actions/checkout@v2
+        -   name: check env
+            env:
+                API_APP_PORT: ${{ env.API_APP_PORT }}
+            run: echo $API_APP_PORT
+        -   name: check var
+            env:
+                API_APP_PORT: ${{ vars.API_APP_PORT }}
+            run: echo ${{ vars.API_APP_PORT }}
         -   name: Validate config
             env:
-                ENVIRONMENT: ${{ secrets.ENVIRONMENT }}
-                API_APP_PORT: ${{ secrets.API_APP_PORT }}
-                TUNNEL_TOKEN: ${{ secrets.TUNNEL_TOKEN }}
-            run: docker compose -f ./deploy/docker-compose.yml config --quiet
+                API_APP_PORT: ${{ env.API_APP_PORT }}
+            run: echo $API_APP_PORT && docker compose -f ./deploy/docker-compose.yml config --quiet
         -   name: Run build
             run: docker build -f ./deploy/dockerfile -t frameapi/frameapi:$GITHUB_SHA .
         -   name: Check image

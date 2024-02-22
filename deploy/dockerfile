@@ -12,14 +12,21 @@ WORKDIR $GOPATH/src/pay4me
 
 COPY ./go.mod ./go.mod
 COPY ./go.sum ./go.sum
-COPY ./src ./src
+COPY ./ ./
 
 # Fetch dependencies.
 RUN go mod download
 RUN go mod verify
 
+# Move generated
+RUN mkdir -p ./ent/generated
+RUN mv ./ent/_generated/generate.go ./ent/generated/generate.go
+
+# Generate ent
+RUN go run -mod=mod entgo.io/ent/cmd/ent generate --target ./ent/generated ./ent/schema 
+
 # Build the binary.
-RUN GOOS=linux GOARCH=amd64 go build -ldflags="-w -s" -o /go/bin/app ./src/main
+RUN GOOS=linux GOARCH=amd64 go build -ldflags="-w -s" -o /go/bin/app ./server/server.go
 
 ############################
 # STEP 2 build a small image
