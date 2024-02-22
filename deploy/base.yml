@@ -1,0 +1,9 @@
+version: "3"
+services:
+    base:
+        environment:
+            ENVIRONMENT: $ENVIRONMENT
+        expose:
+            - $API_APP_PORT
+        ports:
+            - "$API_APP_PORT:$API_APP_PORT"

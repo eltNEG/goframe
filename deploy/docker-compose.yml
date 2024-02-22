@@ -1,0 +1,36 @@
+version: "3"
+services:
+    api:
+        extends:
+            file: ./base.yml
+            service: base
+        build:
+            context: ..
+            dockerfile: ./deploy/dockerfile
+        image: frameapi/frameapi:$GITHUB_SHA
+        container_name: frameapi
+        networks:
+            - app-network
+        volumes:
+            - framedata:./data
+    
+    cloudflared:
+        extends:
+            file: ./base.yml
+            service: base
+        image: cloudflare/cloudflared:latest
+        container_name: cloudflared
+        command: tunnel --no-autoupdate run
+        networks:
+            - app-network
+        environment:
+            TUNNEL_TOKEN: $TUNNEL_TOKEN
+            HOSTNAME: frameapi.prjct.dev
+     
+networks:
+    app-network:
+        external: true
+        name: app_network
+
+volumes:
+    framedata:
