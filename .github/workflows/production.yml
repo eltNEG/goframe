@@ -16,22 +16,22 @@ jobs:
             env:
                 API_APP_PORT: ${{ env.API_APP_PORT }}
             run: echo $API_APP_PORT
-        -   name: check var
-            env:
-                API_APP_PORT: ${{ vars.API_APP_PORT }}
-            run: echo ${{ vars.API_APP_PORT }}
-        -   name: Validate config
-            env:
-                API_APP_PORT: ${{ env.API_APP_PORT }}
-            run: echo $API_APP_PORT && docker compose -f ./deploy/docker-compose.yml config --quiet
-        -   name: Run build
-            run: docker build -f ./deploy/dockerfile -t frameapi/frameapi:$GITHUB_SHA .
-        -   name: Check image
-            run: docker images
-        -   name: Run app
-            run: docker compose -f ./deploy/docker-compose.yml up -d
-        -   name: Wait and log app
-            run: sleep 15 && docker compose -f ./deploy/docker-compose.yml logs --tail=20 api
-        -   name: Prune Docker system
-            run: docker system prune -a -f
+        # -   name: check var
+        #     env:
+        #         API_APP_PORT: ${{ vars.API_APP_PORT }}
+        #     run: echo ${{ vars.API_APP_PORT }}
+        # -   name: Validate config
+        #     env:
+        #         API_APP_PORT: ${{ env.API_APP_PORT }}
+        #     run: echo $API_APP_PORT && docker compose -f ./deploy/docker-compose.yml config --quiet
+        # -   name: Run build
+        #     run: docker build -f ./deploy/dockerfile -t frameapi/frameapi:$GITHUB_SHA .
+        # -   name: Check image
+        #     run: docker images
+        # -   name: Run app
+        #     run: docker compose -f ./deploy/docker-compose.yml up -d
+        # -   name: Wait and log app
+        #     run: sleep 15 && docker compose -f ./deploy/docker-compose.yml logs --tail=20 api
+        # -   name: Prune Docker system
+        #     run: docker system prune -a -f
             
