@@ -12,6 +12,8 @@ func main() {
 
 	http := utils.NewHttp()
 
+	http.Get("/", utils.Handlerize(&ctrl.Base{}, &ctrl.BaseRes{}))
+
 	http.Get("/ping", utils.Handlerize(&ctrl.Ping{}, &ctrl.PingRes{}))
 	http.Post("/ping", utils.Handlerize(&ctrl.Ping{}, &ctrl.PingRes{}))
 
@@ -23,5 +25,5 @@ func main() {
 	slog.With("key", "value").Debug("hello world")
 	slog.Info("listening on http://localhost:8080")
 
-	http.ListenAndServe("localhost:8080")
+	http.ListenAndServe(":8080")
 }

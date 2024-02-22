@@ -33,6 +33,9 @@ RUN GOOS=linux GOARCH=amd64 go build -ldflags="-w -s" -o /go/bin/app ./server/se
 ############################
 FROM alpine
 
+RUN apk update && apk add --no-cache ca-certificates
+RUN apk upgrade --no-cache
+
 # Copy our static executable.
 COPY --from=builder /go/bin/app /go/bin/app
 
